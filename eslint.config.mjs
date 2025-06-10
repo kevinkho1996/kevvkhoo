@@ -1,16 +1,43 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
+// eslint.config.mjs
+import globals from "globals"
+import pluginJs from "@eslint/js"
+import tseslint from "typescript-eslint"
+import pluginReactConfig from "eslint-plugin-react/configs/recommended.js"
+import { fixupConfigRules } from "@eslint/compat"
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+export default [
+  // Apply settings to all JavaScript, TypeScript, and JSX/TSX files
+  { files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"] },
+  {
+    languageOptions: {
+      parserOptions: {
+        // Set parser options for parsing JSX
+        ecmaFeatures: { jsx: true },
+        ecmaVersion: 2021,
+        sourceType: "module",
+      },
+      globals: globals.browser, // Add browser global variables
+    },
+  },
 
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
+  pluginJs.configs.recommended, // Apply basic ESLint rules
+  ...tseslint.configs.recommended, // Apply TypeScript rules
+  ...fixupConfigRules(pluginReactConfig), // Apply React rules
 
-const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
-];
-
-export default eslintConfig;
+  {
+    settings: {
+      // Automatically detect React version
+      react: { version: "detect" },
+    },
+  },
+  {
+    // Additional custom rules
+    rules: {
+      "no-console": "warn", // Warn when using console.log
+      "no-unused-vars": "warn", // Warn for unused variables
+      "react/prop-types": "off", // Disable React prop-types
+      "@typescript-eslint/no-unused-vars": ["warn"],
+      // Warn for unused TypeScript variables
+    },
+  },
+]
