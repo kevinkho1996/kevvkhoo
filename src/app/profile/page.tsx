@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import Kevin from '@/components/images/profile.JPG'
+import Kevin from '@/components/images/profile.jpg'
 
 import DecryptedText from '@/components/DecryptedText/DecryptedText'
 import FadeContent from '@/components/FadeContent/FadeContent'
