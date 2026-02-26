@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/components/theme-provider'
 
 import Header from './header/page'
 import Footer from './footer/page'
+import AnalyticsTracker from '@/components/AnalyticsTracker'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -21,6 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
+        <AnalyticsTracker />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
