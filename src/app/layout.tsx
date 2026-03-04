@@ -6,6 +6,7 @@ import { ThemeProvider } from '@/components/theme-provider'
 import Header from './header/page'
 import Footer from './footer/page'
 import AnalyticsTracker from '@/components/AnalyticsTracker'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -23,6 +24,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <AnalyticsTracker />
+        <SpeedInsights />
         {/* JSON‑LD structured data for the portfolio */}
         <script
           type="application/ld+json"
