@@ -1,41 +1,65 @@
+'use client'
 import Image from 'next/image'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Github, Linkedin, Mail, ExternalLink } from 'lucide-react'
 
 export default function Header() {
+  const pathname = usePathname()
+  if (pathname?.startsWith('/admin')) return null
+
+  const handleScroll = (e: React.MouseEvent, targetId: string) => {
+    e.preventDefault()
+    const element = document.getElementById(targetId)
+    if (element) {
+      // 64px offset for the fixed header
+      const y = element.getBoundingClientRect().top + window.scrollY - 64
+      window.scrollTo({ top: y, behavior: 'smooth' })
+    }
+  }
+
   return (
-    <div>
+    <>
       <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur">
         <div className="container mx-auto px-6 sm:px-4 flex h-16 items-center justify-between gap-4 max-w-6xl">
-          <div className="font-bold text-xl">Kevin Kantona</div>
+          <button
+            onClick={(e) => handleScroll(e, 'profile')}
+            className="font-bold text-xl cursor-pointer hover:opacity-80 transition-opacity"
+          >
+            Kevin Kantona
+          </button>
           <nav className="hidden md:flex gap-6">
-            <Link
+            <a
               href="#about"
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              onClick={(e) => handleScroll(e, 'about')}
+              className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             >
               About
-            </Link>
-            <Link
-              href="#skills"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Skills
-            </Link>
-            {/* <Link
+            </a>
+            <a
               href="#projects"
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              onClick={(e) => handleScroll(e, 'projects')}
+              className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             >
               Projects
-            </Link> */}
-            <Link
+            </a>
+            <a
+              href="#skills"
+              onClick={(e) => handleScroll(e, 'skills')}
+              className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+            >
+              Skills
+            </a>
+            <a
               href="#contacts"
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              onClick={(e) => handleScroll(e, 'contacts')}
+              className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             >
               Contacts
-            </Link>
+            </a>
           </nav>
           <a
             href="mailto:kevinkho96@gmail.com?subject=Hello%20Kevin"
@@ -49,6 +73,6 @@ export default function Header() {
           </a>
         </div>
       </header>
-    </div>
+    </>
   )
 }

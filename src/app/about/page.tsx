@@ -1,30 +1,59 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { db } from '@/lib/firebase'
+import { doc, getDoc } from 'firebase/firestore'
+
 export default function About() {
+  const [bio, setBio] = useState<string>('')
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchIdentity = async () => {
+      try {
+        const docSnap = await getDoc(doc(db, 'site_config', 'identity'))
+
+        if (docSnap.exists()) {
+          setBio(docSnap.data().bio || '')
+        } else {
+          // Fallback text if DB is completely empty
+          setBio(
+            'I am a software engineer specializing in frontend experiences with a deep passion for interaction design...',
+          )
+        }
+      } catch (error) {
+        console.error('Error fetching bio:', error)
+        setBio(
+          'I am a software engineer specializing in frontend experiences with a deep passion for interaction design...',
+        )
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchIdentity()
+  }, [])
+
   return (
     <div>
       <section id="about" className="py-12 md:py-24 border-t">
         <h2 className="text-3xl font-bold mb-8">About Me</h2>
         <div className="grid md:grid-cols-2 gap-8">
           <div className="space-y-4">
-            <p className="text-lg">
-              I started my career as a mobile developer, then gradually shifted
-              into web development, and today I lead tech teams while still
-              staying hands-on with code. Most of my work revolves around
-              building internal systems and mobile banking features using React
-              Native and Next.js, mainly in the banking sector. <br />
-              <br /> As a Tech Lead, I enjoy helping my team grow, making sprint
-              planning healthier, and solving problems together—both technical
-              and non-technical. I believe good tech is not just about clean
-              code, but also about how we work as a team. <br />
-              <br />
-              One of the key moments in my journey was joining the Apple
-              Developer Academy, where I built an iOS app from scratch during an
-              intense 10-month program. That experience shaped the way I
-              approach product development today—start simple, build
-              iteratively, and always focus on the user. <br />
-              <br />
-              I'm still learning every day, and I’m always open to new
-              challenges that combine tech, teamwork, and meaningful impact.
-            </p>
+            {loading ? (
+              <div className="space-y-3">
+                <div className="h-4 bg-muted/50 rounded animate-pulse w-full"></div>
+                <div className="h-4 bg-muted/50 rounded animate-pulse w-[90%]"></div>
+                <div className="h-4 bg-muted/50 rounded animate-pulse w-[95%]"></div>
+                <div className="h-4 bg-muted/50 rounded animate-pulse w-[80%]"></div>
+                <div className="h-4 bg-muted/50 rounded animate-pulse w-[85%] mt-4"></div>
+                <div className="h-4 bg-muted/50 rounded animate-pulse w-[90%]"></div>
+              </div>
+            ) : (
+              <p className="text-lg whitespace-pre-wrap leading-relaxed">
+                {bio}
+              </p>
+            )}
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-muted p-4 rounded-lg">

@@ -11,9 +11,22 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID || "your-measurement-id",
 }
 
+import { getAuth, GoogleAuthProvider } from 'firebase/auth'
+import { getFirestore } from 'firebase/firestore'
+
 // Mencegah inisialisasi ganda saat hot-reloading di Next.js
 const app =
   getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0]
+
+// Initialize Auth
+const auth = getAuth(app)
+const googleProvider = new GoogleAuthProvider()
+googleProvider.setCustomParameters({
+  prompt: 'select_account'
+})
+
+// Initialize Firestore
+const db = getFirestore(app)
 
 // Inisialisasi Analytics khusus untuk client-side
 let analytics: import('firebase/analytics').Analytics | undefined;
@@ -28,4 +41,4 @@ if (typeof window !== 'undefined' && firebaseConfig.apiKey && firebaseConfig.api
   console.warn('Firebase Analytics not initialized: missing or placeholder API key');
 }
 
-export { app, analytics }
+export { app, analytics, auth, googleProvider, db }

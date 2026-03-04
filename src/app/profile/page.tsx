@@ -1,3 +1,6 @@
+'use client'
+
+import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -6,10 +9,35 @@ import Kevin from '@/components/images/profile.jpg'
 import DecryptedText from '@/components/DecryptedText/DecryptedText'
 import FadeContent from '@/components/FadeContent/FadeContent'
 import AnimatedContent from '@/components/AnimatedContent/AnimatedContent'
+import { db } from '@/lib/firebase'
+import { doc, getDoc } from 'firebase/firestore'
 
 export default function Profile() {
+  const [displayName, setDisplayName] = useState<string>('')
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchIdentity = async () => {
+      try {
+        const docSnap = await getDoc(doc(db, 'site_config', 'identity'))
+        if (docSnap.exists() && docSnap.data().displayName) {
+          setDisplayName(docSnap.data().displayName)
+        } else {
+          setDisplayName('Kevin Kantona')
+        }
+      } catch (error) {
+        console.error('Error fetching displayName:', error)
+        setDisplayName('Kevin Kantona')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchIdentity()
+  }, [])
+
   return (
-    <div>
+    <div id="profile">
       <section className="py-12 md:py-24 flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16">
         <div className="flex-1 max-w-2xl space-y-4 text-center md:text-left">
           <AnimatedContent
@@ -40,9 +68,13 @@ export default function Profile() {
             threshold={0.2}
             delay={1}
           >
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
-              I'm Kevin Kantona!
-            </h1>
+            {loading ? (
+              <div className="h-16 w-64 bg-muted/50 rounded animate-pulse mx-auto md:mx-0 mb-2"></div>
+            ) : (
+              <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
+                I'm {displayName}!
+              </h1>
+            )}
           </AnimatedContent>
 
           <DecryptedText
