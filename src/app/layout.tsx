@@ -23,6 +23,27 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <AnalyticsTracker />
+        {/* JSON‑LD structured data for the portfolio */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Person',
+              name: 'Kevin Kantona',
+              url: 'https://kevinkantona.com',
+              sameAs: [
+                'https://github.com/kevinkho1996',
+                'https://linkedin.com/in/kevinkantona',
+              ],
+              jobTitle: 'Front‑End Engineer',
+              worksFor: {
+                '@type': 'Organization',
+                name: 'Freelance / Open‑Source',
+              },
+            }),
+          }}
+        />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
