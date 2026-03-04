@@ -11,6 +11,7 @@ export default function AdminLayoutWrapper({
   children: React.ReactNode
 }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
+  const [isBlurred, setIsBlurred] = useState(false)
   const { user, loading, error, loginWithGoogle, logout } = useAdminAuth()
 
   if (loading) {
@@ -79,15 +80,20 @@ export default function AdminLayoutWrapper({
         toggleSidebar: () => setIsSidebarOpen(!isSidebarOpen),
         user,
         logout,
+        isBlurred,
+        setIsBlurred,
       }}
     >
-      <div className="flex h-screen w-full bg-[#f4f7fe] dark:bg-[#1f2437] text-slate-800 dark:text-slate-100 overflow-hidden font-sans">
-        <AdminSidebar isOpen={isSidebarOpen} />
-
-        <div className="flex-1 flex flex-col min-w-0">
-          <div className="flex-1 overflow-auto p-8 flex gap-8">
-            <div className="flex-1 flex flex-col min-w-0">{children}</div>
-            <ClientMessages />
+      <div className="flex h-screen w-full bg-[#f4f7fe] dark:bg-[#1f2437] text-slate-800 dark:text-slate-100 overflow-hidden font-sans relative">
+        <div
+          className={`flex h-full w-full transition-all duration-300 ${isBlurred ? 'blur-md pointer-events-none brightness-90' : ''}`}
+        >
+          <AdminSidebar isOpen={isSidebarOpen} />
+          <div className="flex-1 flex flex-col min-w-0">
+            <div className="flex-1 overflow-auto p-8 flex gap-8">
+              <div className="flex-1 flex flex-col min-w-0">{children}</div>
+              <ClientMessages />
+            </div>
           </div>
         </div>
       </div>
@@ -104,4 +110,6 @@ export const AdminContext = React.createContext({
     photoURL: string | null
   },
   logout: () => {},
+  isBlurred: false,
+  setIsBlurred: (val: boolean) => {},
 })

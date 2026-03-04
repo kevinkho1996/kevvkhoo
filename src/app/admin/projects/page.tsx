@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useContext, useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { Plus, List, Grid, PenLine, Trash2, X } from 'lucide-react'
 import { AdminHeader } from '../components/AdminHeader'
 import { AdminContext } from '../AdminLayoutWrapper'
@@ -26,7 +27,7 @@ interface Project {
 }
 
 export default function ProjectRegistryPage() {
-  const { toggleSidebar } = useContext(AdminContext)
+  const { toggleSidebar, setIsBlurred } = useContext(AdminContext)
   const [projects, setProjects] = useState<Project[]>([])
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [projectToDelete, setProjectToDelete] = useState<string | null>(null)
@@ -37,6 +38,10 @@ export default function ProjectRegistryPage() {
     subtitle: '',
     url: '',
   })
+
+  useEffect(() => {
+    setIsBlurred(isModalOpen || !!projectToDelete)
+  }, [isModalOpen, projectToDelete, setIsBlurred])
 
   useEffect(() => {
     const q = collection(db, 'portfolio_projects')
@@ -211,106 +216,112 @@ export default function ProjectRegistryPage() {
         )}
       </div>
 
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-[#181d2f] rounded-[2rem] p-8 w-full max-w-md shadow-xl border border-slate-200 dark:border-white/5 relative">
-            <button
-              onClick={handleCloseModal}
-              className="absolute top-6 right-6 text-slate-400 hover:text-slate-600 dark:hover:text-white"
-            >
-              <X className="w-5 h-5" />
-            </button>
-            <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-6">
-              {editingProject ? 'Edit Project' : 'Create Project'}
-            </h2>
-
-            <form onSubmit={handleAddProject} className="flex flex-col gap-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Title
-                </label>
-                <input
-                  required
-                  value={newProject.title}
-                  onChange={(e) =>
-                    setNewProject({ ...newProject, title: e.target.value })
-                  }
-                  type="text"
-                  className="w-full bg-[#f4f7fe] dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500"
-                  placeholder="E.g. Profile Portfolio"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Subtitle / Category
-                </label>
-                <input
-                  required
-                  value={newProject.subtitle}
-                  onChange={(e) =>
-                    setNewProject({ ...newProject, subtitle: e.target.value })
-                  }
-                  type="text"
-                  className="w-full bg-[#f4f7fe] dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500"
-                  placeholder="E.g. Frontend"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Project URL (Optional)
-                </label>
-                <input
-                  value={newProject.url}
-                  onChange={(e) =>
-                    setNewProject({ ...newProject, url: e.target.value })
-                  }
-                  type="url"
-                  className="w-full bg-[#f4f7fe] dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500"
-                  placeholder="https://..."
-                />
-              </div>
-
+      {isModalOpen &&
+        typeof document !== 'undefined' &&
+        createPortal(
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+            <div className="bg-white dark:bg-[#181d2f] rounded-[2rem] p-8 w-full max-w-md shadow-xl border border-slate-200 dark:border-white/5 relative">
               <button
-                type="submit"
-                className="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white w-full py-3 rounded-xl font-medium transition-colors shadow-md shadow-indigo-500/20"
+                onClick={handleCloseModal}
+                className="absolute top-6 right-6 text-slate-400 hover:text-slate-600 dark:hover:text-white"
               >
-                {editingProject ? 'Save Changes' : 'Save Project'}
+                <X className="w-5 h-5" />
               </button>
-            </form>
-          </div>
-        </div>
-      )}
+              <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-6">
+                {editingProject ? 'Edit Project' : 'Create Project'}
+              </h2>
 
-      {projectToDelete && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-[#181d2f] rounded-[2rem] p-8 w-full max-w-sm shadow-xl border border-slate-200 dark:border-white/5 relative text-center">
-            <div className="w-16 h-16 rounded-full bg-red-100 dark:bg-red-500/20 text-red-500 flex items-center justify-center mx-auto mb-6">
-              <Trash2 className="w-8 h-8" />
+              <form onSubmit={handleAddProject} className="flex flex-col gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                    Title
+                  </label>
+                  <input
+                    required
+                    value={newProject.title}
+                    onChange={(e) =>
+                      setNewProject({ ...newProject, title: e.target.value })
+                    }
+                    type="text"
+                    className="w-full bg-[#f4f7fe] dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500"
+                    placeholder="E.g. Profile Portfolio"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                    Subtitle / Category
+                  </label>
+                  <input
+                    required
+                    value={newProject.subtitle}
+                    onChange={(e) =>
+                      setNewProject({ ...newProject, subtitle: e.target.value })
+                    }
+                    type="text"
+                    className="w-full bg-[#f4f7fe] dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500"
+                    placeholder="E.g. Frontend"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                    Project URL (Optional)
+                  </label>
+                  <input
+                    value={newProject.url}
+                    onChange={(e) =>
+                      setNewProject({ ...newProject, url: e.target.value })
+                    }
+                    type="url"
+                    className="w-full bg-[#f4f7fe] dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500"
+                    placeholder="https://..."
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white w-full py-3 rounded-xl font-medium transition-colors shadow-md shadow-indigo-500/20"
+                >
+                  {editingProject ? 'Save Changes' : 'Save Project'}
+                </button>
+              </form>
             </div>
-            <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">
-              Delete Project
-            </h2>
-            <p className="text-slate-500 dark:text-slate-400 mb-8">
-              Are you sure you want to delete this project? This action cannot
-              be undone.
-            </p>
-            <div className="flex gap-4">
-              <button
-                onClick={() => setProjectToDelete(null)}
-                className="flex-1 bg-[#f4f7fe] hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 py-3 rounded-xl font-medium transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmDeleteProject}
-                className="flex-1 bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl font-medium transition-colors shadow-md shadow-red-500/20"
-              >
-                Delete
-              </button>
+          </div>,
+          document.body,
+        )}
+
+      {projectToDelete &&
+        typeof document !== 'undefined' &&
+        createPortal(
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+            <div className="bg-white dark:bg-[#181d2f] rounded-[2rem] p-8 w-full max-w-sm shadow-xl border border-slate-200 dark:border-white/5 relative text-center">
+              <div className="w-16 h-16 rounded-full bg-red-100 dark:bg-red-500/20 text-red-500 flex items-center justify-center mx-auto mb-6">
+                <Trash2 className="w-8 h-8" />
+              </div>
+              <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">
+                Delete Project
+              </h2>
+              <p className="text-slate-500 dark:text-slate-400 mb-8">
+                Are you sure you want to delete this project? This action cannot
+                be undone.
+              </p>
+              <div className="flex gap-4">
+                <button
+                  onClick={() => setProjectToDelete(null)}
+                  className="flex-1 bg-[#f4f7fe] hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 py-3 rounded-xl font-medium transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDeleteProject}
+                  className="flex-1 bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl font-medium transition-colors shadow-md shadow-red-500/20"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body,
+        )}
     </>
   )
 }

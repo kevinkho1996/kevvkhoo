@@ -62,9 +62,9 @@ export default function Header() {
             </a>
           </nav>
           <a
-            href="mailto:kevinkho96@gmail.com?subject=Hello%20Kevin"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="#contacts"
+            onClick={(e) => handleScroll(e, 'contacts')}
+            className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
           >
             <Button variant="outline" size="sm">
               <Mail className="mr-2 h-4 w-4" />
