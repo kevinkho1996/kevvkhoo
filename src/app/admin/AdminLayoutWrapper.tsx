@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { AdminSidebar } from './components/AdminSidebar'
 import { ClientMessages } from './components/ClientMessages'
 import { useAdminAuth } from './hooks/useAdminAuth'
+import { Menu } from 'lucide-react'
 
 export default function AdminLayoutWrapper({
   children,
@@ -13,6 +14,45 @@ export default function AdminLayoutWrapper({
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const [isBlurred, setIsBlurred] = useState(false)
   const { user, loading, error, loginWithGoogle, logout } = useAdminAuth()
+
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout
+
+    const resetTimer = () => {
+      if (timeoutId) clearTimeout(timeoutId)
+      if (user) {
+        timeoutId = setTimeout(
+          () => {
+            logout()
+          },
+          15 * 60 * 1000,
+        ) // 15 minutes
+      }
+    }
+
+    if (user) {
+      resetTimer()
+      window.addEventListener('mousemove', resetTimer)
+      window.addEventListener('keydown', resetTimer)
+      window.addEventListener('click', resetTimer)
+      window.addEventListener('scroll', resetTimer)
+    }
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId)
+      window.removeEventListener('mousemove', resetTimer)
+      window.removeEventListener('keydown', resetTimer)
+      window.removeEventListener('click', resetTimer)
+      window.removeEventListener('scroll', resetTimer)
+    }
+  }, [user, logout])
+
+  useEffect(() => {
+    // Close sidebar by default on mobile on load
+    if (window.innerWidth < 768) {
+      setIsSidebarOpen(false)
+    }
+  }, [])
 
   if (loading) {
     return (
@@ -88,9 +128,34 @@ export default function AdminLayoutWrapper({
         <div
           className={`flex h-full w-full transition-all duration-300 ${isBlurred ? 'blur-md pointer-events-none brightness-90' : ''}`}
         >
-          <AdminSidebar isOpen={isSidebarOpen} />
+          {/* Mobile Overlay */}
+          {isSidebarOpen && (
+            <div
+              className="fixed inset-0 bg-black/50 z-20 md:hidden transition-opacity opacity-100"
+              onClick={() => setIsSidebarOpen(false)}
+            />
+          )}
+
+          <AdminSidebar
+            isOpen={isSidebarOpen}
+            closeSidebar={() => setIsSidebarOpen(false)}
+          />
           <div className="flex-1 flex flex-col min-w-0">
-            <div className="flex-1 overflow-auto p-8 flex gap-8">
+            {/* Header for mobile */}
+            <div className="md:hidden flex items-center p-4 bg-white dark:bg-[#181d2f] border-b border-slate-200 dark:border-white/5">
+              <button
+                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                className="p-2 -ml-2 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors"
+                aria-label="Toggle Sidebar"
+              >
+                <Menu className="w-6 h-6" />
+              </button>
+              <h1 className="ml-4 text-lg font-bold text-slate-800 dark:text-white">
+                Admin Panel
+              </h1>
+            </div>
+
+            <div className="flex-1 overflow-auto p-4 lg:p-8 flex flex-col xl:flex-row gap-4 lg:gap-8">
               <div className="flex-1 flex flex-col min-w-0">{children}</div>
               <ClientMessages />
             </div>

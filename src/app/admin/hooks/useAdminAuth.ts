@@ -42,6 +42,9 @@ export function useAdminAuth() {
   const loginWithGoogle = async () => {
     setError(null)
     try {
+      if (auth.currentUser) {
+        throw new Error('Session still active. Please refresh or logout first.')
+      }
       const result = await signInWithPopup(auth, googleProvider)
       if (result.user.email?.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
         await signOut(auth)
@@ -52,7 +55,9 @@ export function useAdminAuth() {
       const errorMsg =
         err.message === 'Unauthorized Account'
           ? `Unauthorized Account: Please log in with the correct specified email.`
-          : `Login failed: ${err.message || 'Unknown error occurred during login.'}`
+          : err.message.includes('Session still active')
+            ? err.message
+            : `Login failed: ${err.message || 'Unknown error occurred during login.'}`
       setError(errorMsg)
     }
   }

@@ -78,7 +78,7 @@ export function ClientMessages() {
   }
 
   return (
-    <div className="w-[320px] bg-white dark:bg-[#181d2f]/80 rounded-[2rem] p-6 shadow-sm border border-slate-200 dark:border-white/5 flex flex-col shrink-0 h-[calc(100vh-144px)] sticky top-0 hidden lg:flex">
+    <div className="w-full xl:w-[320px] bg-white dark:bg-[#181d2f]/80 rounded-[2rem] p-6 shadow-sm border border-slate-200 dark:border-white/5 flex flex-col shrink-0 h-[500px] xl:h-[calc(100vh-144px)] xl:sticky xl:top-0">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-bold text-slate-800 dark:text-white">
           Client Messages

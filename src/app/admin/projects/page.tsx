@@ -149,7 +149,7 @@ export default function ProjectRegistryPage() {
       <div
         className={
           viewMode === 'grid'
-            ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
+            ? 'flex overflow-x-auto md:overflow-visible snap-x snap-mandatory md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 pb-4 -mx-4 px-4 md:mx-0 md:px-0 md:pb-0 scrollbar-hide'
             : 'flex flex-col gap-4'
         }
       >
@@ -161,7 +161,7 @@ export default function ProjectRegistryPage() {
           projects.map((item) => (
             <div
               key={item.id}
-              className={`bg-[#f4f7fe] dark:bg-white/5 ${viewMode === 'grid' ? 'rounded-3xl p-6 flex-col' : 'rounded-2xl p-4 flex-row items-center'} flex shadow-sm border border-slate-200 dark:border-white/10 relative group transition-all hover:-translate-y-1`}
+              className={`bg-[#f4f7fe] dark:bg-white/5 ${viewMode === 'grid' ? 'rounded-3xl p-6 flex-col w-[85vw] max-w-[320px] shrink-0 md:w-auto md:max-w-none snap-center' : 'rounded-2xl p-4 flex-row items-center'} flex shadow-sm border border-slate-200 dark:border-white/10 relative group transition-all hover:-translate-y-1`}
             >
               <div
                 className={`absolute ${viewMode === 'grid' ? 'top-4 right-4' : 'top-1/2 -translate-y-1/2 right-4'} opacity-0 group-hover:opacity-100 transition-opacity flex gap-2`}
