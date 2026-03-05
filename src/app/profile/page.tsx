@@ -66,34 +66,40 @@ export default function Profile() {
             animateOpacity
             scale={1.1}
             threshold={0.2}
-            delay={1}
+            delay={0}
           >
-            {loading ? (
-              <div className="h-16 w-64 bg-muted/50 rounded animate-pulse mx-auto md:mx-0 mb-2"></div>
-            ) : (
-              <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
-                I'm {displayName}!
-              </h1>
-            )}
+            <div className="min-h-[60px] flex items-center justify-center md:justify-start">
+              {loading ? (
+                <div className="h-12 w-64 bg-muted/50 rounded animate-pulse mb-2"></div>
+              ) : (
+                <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
+                  I'm {displayName}!
+                </h1>
+              )}
+            </div>
           </AnimatedContent>
 
-          <DecryptedText
-            text="Software Engineer FrontEnd"
-            animateOn="view"
-            speed={50}
-            maxIterations={20}
-            sequential={true}
-            revealDirection="start"
-          />
-          <DecryptedText
-            text="I develop internal mobile and web application that help teams work
-            more efficiently and effectively"
-            animateOn="view"
-            speed={20}
-            maxIterations={20}
-            sequential={true}
-            revealDirection="start"
-          />
+          <div className="min-h-[40px]">
+            <DecryptedText
+              text="Software Engineer FrontEnd"
+              animateOn="view"
+              speed={50}
+              maxIterations={20}
+              sequential={true}
+              revealDirection="start"
+            />
+          </div>
+          <div className="min-h-[60px]">
+            <DecryptedText
+              text="I develop internal mobile and web application that help teams work
+              more efficiently and effectively"
+              animateOn="view"
+              speed={20}
+              maxIterations={20}
+              sequential={true}
+              revealDirection="start"
+            />
+          </div>
           <div className="flex gap-4 pt-4 justify-center md:justify-start">
             <a
               href="https://www.linkedin.com/in/kevinkantona/"
@@ -114,10 +120,10 @@ export default function Profile() {
         </div>
         <FadeContent
           blur={true}
-          duration={1000}
+          duration={400}
           easing="ease-out"
           initialOpacity={0}
-          delay={2000}
+          delay={0}
         >
           <div className="flex-1 flex justify-center">
             <div className="relative w-72 h-72 rounded-full overflow-hidden border-4 border-muted">

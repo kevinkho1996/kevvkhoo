@@ -39,7 +39,7 @@ export default function About() {
       <section id="about" className="py-12 md:py-24 border-t">
         <h2 className="text-3xl font-bold mb-8">About Me</h2>
         <div className="grid md:grid-cols-2 gap-8">
-          <div className="space-y-4">
+          <div className="space-y-4 min-h-[160px]">
             {loading ? (
               <div className="space-y-3">
                 <div className="h-4 bg-muted/50 rounded animate-pulse w-full"></div>
