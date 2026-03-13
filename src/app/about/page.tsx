@@ -3,12 +3,19 @@
 import { useEffect, useState } from 'react'
 import { db } from '@/lib/firebase'
 import { doc, getDoc } from 'firebase/firestore'
+import { SiteIdentity } from '@/lib/data'
 
-export default function About() {
-  const [bio, setBio] = useState<string>('')
-  const [loading, setLoading] = useState(true)
+interface AboutProps {
+  initialData?: SiteIdentity
+}
+
+export default function About({ initialData }: AboutProps) {
+  const [bio, setBio] = useState<string>(initialData?.bio || '')
+  const [loading, setLoading] = useState(!initialData)
 
   useEffect(() => {
+    if (initialData) return
+
     const fetchIdentity = async () => {
       try {
         const docSnap = await getDoc(doc(db, 'site_config', 'identity'))
@@ -16,7 +23,6 @@ export default function About() {
         if (docSnap.exists()) {
           setBio(docSnap.data().bio || '')
         } else {
-          // Fallback text if DB is completely empty
           setBio(
             'I am a software engineer specializing in frontend experiences with a deep passion for interaction design...',
           )
@@ -32,14 +38,14 @@ export default function About() {
     }
 
     fetchIdentity()
-  }, [])
+  }, [initialData])
 
   return (
     <div>
       <section id="about" className="py-12 md:py-24 border-t">
         <h2 className="text-3xl font-bold mb-8">About Me</h2>
         <div className="grid md:grid-cols-2 gap-8">
-          <div className="space-y-4 min-h-[160px]">
+          <div className="space-y-4 min-h-[160px] md:min-h-[200px]">
             {loading ? (
               <div className="space-y-3">
                 <div className="h-4 bg-muted/50 rounded animate-pulse w-full"></div>

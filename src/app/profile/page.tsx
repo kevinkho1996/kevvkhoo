@@ -11,12 +11,19 @@ import FadeContent from '@/components/FadeContent/FadeContent'
 import AnimatedContent from '@/components/AnimatedContent/AnimatedContent'
 import { db } from '@/lib/firebase'
 import { doc, getDoc } from 'firebase/firestore'
+import { SiteIdentity } from '@/lib/data'
 
-export default function Profile() {
-  const [displayName, setDisplayName] = useState<string>('')
-  const [loading, setLoading] = useState(true)
+interface ProfileProps {
+  initialData?: SiteIdentity
+}
+
+export default function Profile({ initialData }: ProfileProps) {
+  const [displayName, setDisplayName] = useState<string>(initialData?.displayName || '')
+  const [loading, setLoading] = useState(!initialData)
 
   useEffect(() => {
+    if (initialData) return
+
     const fetchIdentity = async () => {
       try {
         const docSnap = await getDoc(doc(db, 'site_config', 'identity'))
@@ -34,27 +41,29 @@ export default function Profile() {
     }
 
     fetchIdentity()
-  }, [])
+  }, [initialData])
 
   return (
     <div id="profile">
       <section className="py-12 md:py-24 flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16">
         <div className="flex-1 max-w-2xl space-y-4 text-center md:text-left">
-          <AnimatedContent
-            distance={100}
-            direction="vertical"
-            reverse={true}
-            duration={1.2}
-            ease="power3.out"
-            initialOpacity={0}
-            animateOpacity
-            scale={1.1}
-            threshold={0.2}
-          >
-            <Badge className="mb-4 mx-auto md:mx-0 w-fit">
-              Open for new opportunity
-            </Badge>
-          </AnimatedContent>
+          <div className="h-8">
+            <AnimatedContent
+              distance={100}
+              direction="vertical"
+              reverse={true}
+              duration={1.2}
+              ease="power3.out"
+              initialOpacity={0}
+              animateOpacity
+              scale={1.1}
+              threshold={0.2}
+            >
+              <Badge className="mb-4 mx-auto md:mx-0 w-fit">
+                Open for new opportunity
+              </Badge>
+            </AnimatedContent>
+          </div>
 
           <AnimatedContent
             distance={100}
@@ -68,7 +77,7 @@ export default function Profile() {
             threshold={0.2}
             delay={0}
           >
-            <div className="min-h-[60px] flex items-center justify-center md:justify-start">
+            <div className="min-h-[48px] md:min-h-[72px] flex items-center justify-center md:justify-start">
               {loading ? (
                 <div className="h-12 w-64 bg-muted/50 rounded animate-pulse mb-2"></div>
               ) : (
@@ -79,7 +88,7 @@ export default function Profile() {
             </div>
           </AnimatedContent>
 
-          <div className="min-h-[40px]">
+          <div className="min-h-[28px] md:min-h-[32px]">
             <DecryptedText
               text="Software Engineer FrontEnd"
               animateOn="view"
@@ -87,17 +96,18 @@ export default function Profile() {
               maxIterations={20}
               sequential={true}
               revealDirection="start"
+              className="text-xl font-medium text-muted-foreground"
             />
           </div>
-          <div className="min-h-[60px]">
+          <div className="min-h-[60px] md:min-h-[80px]">
             <DecryptedText
-              text="I develop internal mobile and web application that help teams work
-              more efficiently and effectively"
+              text="I develop internal mobile and web application that help teams work more efficiently and effectively"
               animateOn="view"
               speed={20}
               maxIterations={20}
               sequential={true}
               revealDirection="start"
+              className="text-lg text-muted-foreground"
             />
           </div>
           <div className="flex gap-4 pt-4 justify-center md:justify-start">
@@ -113,7 +123,6 @@ export default function Profile() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              {' '}
               <Button variant="outline">Download CV</Button>
             </a>
           </div>
@@ -126,7 +135,7 @@ export default function Profile() {
           delay={0}
         >
           <div className="flex-1 flex justify-center">
-            <div className="relative w-72 h-72 rounded-full overflow-hidden border-4 border-muted">
+            <div className="relative w-64 h-64 md:w-72 md:h-72 rounded-full overflow-hidden border-4 border-muted shadow-lg">
               <Image
                 src={Kevin}
                 alt="Kevin Kantona"
